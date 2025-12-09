@@ -8,14 +8,14 @@ import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
 
-    Page<OrderResponseDto> getOrders(Pageable pageable);
+    Page<OrderResponseDto> getOrdersPages(Pageable pageable);
 
-    ResponseMessage<OrderResponseDto> getOrder(String id);
+    ResponseMessage<OrderResponseDto> getOrder(String orderNo);
 
     ResponseMessage<OrderResponseDto> createOrder(OrderRequestDto request);
 
-    ResponseMessage<OrderResponseDto> updateOrder(String id, OrderRequestDto request);
+    ResponseMessage<OrderResponseDto> updateOrder(OrderRequestDto request);
 
-    ResponseMessage<Object> deleteOrder(String id);
+    ResponseMessage<Object> deleteOrder(String orderNo);
 
 }

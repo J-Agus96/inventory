@@ -10,8 +10,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface InventoryRepository extends JpaRepository<InventoryEntity, String>, JpaSpecificationExecutor<InventoryEntity> {
 
-    @Query("select coalesce(sum(i.qty), 0) from InventoryEntity i " +
-            "where i.itemId = :itemId and i.type = :type")
+    @Query("select coalesce(sum(i.qty), 0) " +
+            "from InventoryEntity i " +
+            "where i.item.id = :itemId and i.type = :type")
     long sumQtyByItemIdAndType(@Param("itemId") Integer itemId,
                                @Param("type") String type);
 }

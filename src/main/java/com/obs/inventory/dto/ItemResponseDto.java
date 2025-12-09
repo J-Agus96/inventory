@@ -13,9 +13,7 @@ import java.math.BigDecimal;
 @Builder
 public class ItemResponseDto {
 
-    private String id;
-
-    private Integer itemId;
+    private Integer id;
 
     private String name;
 

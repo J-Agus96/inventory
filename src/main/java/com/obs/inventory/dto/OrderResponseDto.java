@@ -13,8 +13,6 @@ import java.math.BigDecimal;
 @Builder
 public class OrderResponseDto {
 
-    private String id;
-
     private String orderNo;
 
     private Integer itemId;

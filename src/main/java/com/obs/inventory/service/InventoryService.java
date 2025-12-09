@@ -8,14 +8,14 @@ import org.springframework.data.domain.Pageable;
 
 public interface InventoryService {
 
-    Page<InventoryResponseDto> getInventories(Pageable pageable);
+    Page<InventoryResponseDto> getInventoriesPage(Pageable pageable);
 
-    ResponseMessage<InventoryResponseDto> getInventory(String id);
+    ResponseMessage<InventoryResponseDto> getInventory(Integer id);
 
     ResponseMessage<InventoryResponseDto> createInventory(InventoryRequestDto request);
 
-    ResponseMessage<InventoryResponseDto> updateInventory(String id, InventoryRequestDto request);
+    ResponseMessage<InventoryResponseDto> updateInventory(InventoryRequestDto request);
 
-    ResponseMessage<Object> deleteInventory(String id);
+    ResponseMessage<Object> deleteInventory(Integer id);
 
 }

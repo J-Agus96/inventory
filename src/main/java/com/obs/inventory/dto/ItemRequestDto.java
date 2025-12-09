@@ -14,14 +14,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ItemRequestDto {
 
-    @NotNull
-    private Integer itemId;
+    private Integer id;
 
-    @NotBlank
     private String name;
 
-    @NotNull
-    @Positive
     private BigDecimal price;
 
 }

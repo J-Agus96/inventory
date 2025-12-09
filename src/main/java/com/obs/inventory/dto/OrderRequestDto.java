@@ -19,6 +19,4 @@ public class OrderRequestDto {
 
     private Long qty;
 
-    private BigDecimal price;
-
 }

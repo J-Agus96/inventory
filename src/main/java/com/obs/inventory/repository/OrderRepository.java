@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, String>, JpaSpecificationExecutor<OrderEntity> {
 
-    @Query("select coalesce(sum(o.qty), 0) from OrderEntity o " +
-            "where o.itemId = :itemId")
+    @Query("select coalesce(sum(o.qty), 0) " +
+            "from OrderEntity o " +
+            "where o.item.id = :itemId")
     long sumOrderedQtyByItemId(@Param("itemId") Integer itemId);
 }

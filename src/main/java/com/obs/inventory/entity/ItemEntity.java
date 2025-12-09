@@ -17,12 +17,8 @@ import java.math.BigDecimal;
 public class ItemEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", nullable = false, updatable = false)
-    private String id;
-
-    @Column(name = "item_id", nullable = false, unique = true)
-    private Integer itemId;        // 1..7 sesuai excel
+    @Column(name = "id", nullable = false, unique = true)
+    private Integer id;
 
     @Column(name = "name", nullable = false)
     private String name;

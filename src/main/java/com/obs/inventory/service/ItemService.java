@@ -8,14 +8,14 @@ import org.springframework.data.domain.Pageable;
 
 public interface ItemService {
 
-    Page<ItemResponseDto> getItems(Pageable pageable);         // listing + remaining stock
+    Page<ItemResponseDto> getItemsPage(Pageable pageable);         // listing + remaining stock
 
-    ResponseMessage<ItemResponseDto> getItem(String id);       // get detail + remaining stock
+    ResponseMessage<ItemResponseDto> getItem(Integer id);       // get detail + remaining stock
 
     ResponseMessage<ItemResponseDto> createItem(ItemRequestDto request);
 
-    ResponseMessage<ItemResponseDto> updateItem(String id, ItemRequestDto request);
+    ResponseMessage<ItemResponseDto> updateItem(ItemRequestDto request);
 
-    ResponseMessage<Object> deleteItem(String id);
+    ResponseMessage<Object> deleteItem(Integer id);
 
 }

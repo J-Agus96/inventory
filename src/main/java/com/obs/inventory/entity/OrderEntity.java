@@ -17,19 +17,12 @@ import java.math.BigDecimal;
 public class OrderEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", nullable = false, updatable = false)
-    private String id;
-
     @Column(name = "order_no", nullable = false)
-    private String orderNo;               // O1..O10
+    private String orderNo;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "item_id_fk", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
     private ItemEntity item;
-
-    @Column(name = "item_id", nullable = false)
-    private Integer itemId;
 
     @Column(name = "qty", nullable = false)
     private Long qty;

@@ -10,5 +10,4 @@ import java.util.Optional;
 @Repository
 public interface ItemRepository extends JpaRepository<ItemEntity, String>, JpaSpecificationExecutor<ItemEntity> {
 
-    Optional<ItemEntity> findByItemId(Integer itemId);
 }
