@@ -5,6 +5,7 @@ import com.obs.inventory.dto.InventoryResponseDto;
 import com.obs.inventory.dto.OrderRequestDto;
 import com.obs.inventory.dto.OrderResponseDto;
 import com.obs.inventory.dto.response.ResponseMessage;
+import com.obs.inventory.dto.search.OrderSearchDto;
 import com.obs.inventory.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("")
-    public Page<OrderResponseDto> getOrderPages(Pageable pageable) {
-        return orderService.getOrdersPages(pageable);
+    public Page<OrderResponseDto> getOrderPages(OrderSearchDto orderSearchDto, Pageable pageable) {
+        return orderService.getOrdersPages(orderSearchDto, pageable);
     }
 
     @GetMapping("/{orderNo}")

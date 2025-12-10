@@ -3,6 +3,7 @@ package com.obs.inventory.controller;
 import com.obs.inventory.dto.ItemRequestDto;
 import com.obs.inventory.dto.ItemResponseDto;
 import com.obs.inventory.dto.response.ResponseMessage;
+import com.obs.inventory.dto.search.ItemSearchDto;
 import com.obs.inventory.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("")
-    public Page<ItemResponseDto> getItemsPage (Pageable pageable){
-        return itemService.getItemsPage(pageable);
+    public Page<ItemResponseDto> getItemsPage (ItemSearchDto itemSearchDto, Pageable pageable){
+        return itemService.getItemsPage(itemSearchDto, pageable);
     }
 
     @GetMapping("/{id}")

@@ -3,6 +3,7 @@ package com.obs.inventory.controller;
 import com.obs.inventory.dto.InventoryRequestDto;
 import com.obs.inventory.dto.InventoryResponseDto;
 import com.obs.inventory.dto.response.ResponseMessage;
+import com.obs.inventory.dto.search.InventorySearchDto;
 import com.obs.inventory.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @GetMapping("")
-    public Page<InventoryResponseDto> getInventoriesPage(Pageable pageable) {
-        return inventoryService.getInventoriesPage(pageable);
+    public Page<InventoryResponseDto> getInventoriesPage(InventorySearchDto inventorySearchDto, Pageable pageable) {
+        return inventoryService.getInventoriesPage(inventorySearchDto, pageable);
     }
 
     @GetMapping("/{id}")

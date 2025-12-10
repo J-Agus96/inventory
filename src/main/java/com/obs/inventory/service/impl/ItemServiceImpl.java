@@ -3,6 +3,7 @@ package com.obs.inventory.service.impl;
 import com.obs.inventory.dto.ItemRequestDto;
 import com.obs.inventory.dto.ItemResponseDto;
 import com.obs.inventory.dto.response.ResponseMessage;
+import com.obs.inventory.dto.search.ItemSearchDto;
 import com.obs.inventory.entity.ItemEntity;
 import com.obs.inventory.exception.ErrorBusinessException;
 import com.obs.inventory.repository.ItemRepository;
@@ -11,12 +12,15 @@ import com.obs.inventory.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +33,21 @@ public class ItemServiceImpl implements ItemService {
     private final StockService stockService;
 
     @Override
-    public Page<ItemResponseDto> getItemsPage(Pageable pageable) {
-        return itemRepository.findAll(pageable)
+    public Page<ItemResponseDto> getItemsPage(ItemSearchDto itemSearchDto, Pageable pageable) {
+        Specification<ItemEntity> spec = (root, query, cb) -> cb.conjunction();
+
+        if (itemSearchDto.getId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("id"), itemSearchDto.getId()));
+        }
+
+        if (StringUtils.hasText(itemSearchDto.getName())) {
+            String likeName = "%" + itemSearchDto.getName().toLowerCase(Locale.ROOT) + "%";
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("name")), likeName));
+        }
+
+        return itemRepository.findAll(spec, pageable)
                 .map(this::toDto);
     }
 

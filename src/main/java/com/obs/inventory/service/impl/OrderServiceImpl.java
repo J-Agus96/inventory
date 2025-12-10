@@ -3,6 +3,7 @@ package com.obs.inventory.service.impl;
 import com.obs.inventory.dto.OrderRequestDto;
 import com.obs.inventory.dto.OrderResponseDto;
 import com.obs.inventory.dto.response.ResponseMessage;
+import com.obs.inventory.dto.search.OrderSearchDto;
 import com.obs.inventory.entity.ItemEntity;
 import com.obs.inventory.entity.OrderEntity;
 import com.obs.inventory.exception.ErrorBusinessException;
@@ -13,7 +14,9 @@ import com.obs.inventory.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,8 +36,21 @@ public class OrderServiceImpl implements OrderService {
     private final StockService stockService;
 
     @Override
-    public Page<OrderResponseDto> getOrdersPages(Pageable pageable) {
-        return orderRepository.findAll(pageable).map(this::toDto);
+    public Page<OrderResponseDto> getOrdersPages(OrderSearchDto orderSearchDto, Pageable pageable) {
+        Specification<OrderEntity> spec = (root, query, cb) -> cb.conjunction();
+
+        if (StringUtils.hasText(orderSearchDto.getOrderNo())) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("orderNo"), orderSearchDto.getOrderNo()));
+        }
+
+        if (orderSearchDto.getItemId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.join("item").get("id"), orderSearchDto.getItemId()));
+        }
+
+        return orderRepository.findAll(spec, pageable)
+                .map(this::toDto);
     }
 
     @Override

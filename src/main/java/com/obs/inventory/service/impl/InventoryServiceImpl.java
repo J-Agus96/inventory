@@ -3,6 +3,7 @@ package com.obs.inventory.service.impl;
 import com.obs.inventory.dto.InventoryRequestDto;
 import com.obs.inventory.dto.InventoryResponseDto;
 import com.obs.inventory.dto.response.ResponseMessage;
+import com.obs.inventory.dto.search.InventorySearchDto;
 import com.obs.inventory.entity.InventoryEntity;
 import com.obs.inventory.entity.ItemEntity;
 import com.obs.inventory.exception.ErrorBusinessException;
@@ -12,12 +13,15 @@ import com.obs.inventory.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +34,27 @@ public class InventoryServiceImpl implements InventoryService {
     private final ItemRepository itemRepository;
 
     @Override
-    public Page<InventoryResponseDto> getInventoriesPage(Pageable pageable) {
-        return inventoryRepository.findAll(pageable).map(this::toDto);
+    public Page<InventoryResponseDto> getInventoriesPage(InventorySearchDto inventorySearchDto, Pageable pageable) {
+        Specification<InventoryEntity> spec = (root, query, cb) -> cb.conjunction();
+
+        if (inventorySearchDto.getId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("id"), inventorySearchDto.getId()));
+        }
+
+        if (inventorySearchDto.getItemId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.join("item").get("id"), inventorySearchDto.getItemId()));
+        }
+
+        if (StringUtils.hasText(inventorySearchDto.getType())) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(cb.upper(root.get("type")),
+                            inventorySearchDto.getType().toUpperCase(Locale.ROOT)));
+        }
+
+        return inventoryRepository.findAll(spec, pageable)
+                .map(this::toDto);
     }
 
     @Override
@@ -69,22 +92,35 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public ResponseMessage<InventoryResponseDto> updateInventory(InventoryRequestDto request) {
-        validateInventoryRequest(request);
+        /**
+         * For inventory, updates are actually not allowed because they change the stock history.
+         * Ideally, inventory should only support create operations and not updates.
+         * According to the logic in requirement point 5.1, it says “if inventory added” and does not mention updates, only additions.
+         * However, in the API requirements for inventory, CRUD is requested.
+         * This can also be verified from the inventory table: at IDs 8 and 9,
+         * an existing item_id is recorded as a new record instead of modifying the previous one.
 
-        InventoryEntity entity = inventoryRepository.findById(String.valueOf(request.getId()))
-                .orElseThrow(() -> new ErrorBusinessException("Inventory not found", "INV-404"));
+         * I still implemented an update endpoint for inventory in the code in case it is needed,
+         * but using it will make the stock calculation somewhat inconsistent and misleading.**/
 
-        ItemEntity item = itemRepository.findById(String.valueOf(request.getItemId()))
-                .orElseThrow(() -> new ErrorBusinessException("Item not found", "INV-ITEM-404"));
 
-        entity.setItem(item);
-        entity.setQty(request.getQty());
-        entity.setType(request.getType().trim().toUpperCase());
-
-        entity = inventoryRepository.save(entity);
-
-        return buildResponse(Collections.singletonList(toDto(entity)), false, null,
-                "Inventory updated successfully");
+        return null;
+//        validateInventoryRequest(request);
+//
+//        InventoryEntity entity = inventoryRepository.findById(String.valueOf(request.getId()))
+//                .orElseThrow(() -> new ErrorBusinessException("Inventory not found", "INV-404"));
+//
+//        ItemEntity item = itemRepository.findById(String.valueOf(request.getItemId()))
+//                .orElseThrow(() -> new ErrorBusinessException("Item not found", "INV-ITEM-404"));
+//
+//        entity.setItem(item);
+//        entity.setQty(request.getQty());
+//        entity.setType(request.getType().trim().toUpperCase());
+//
+//        entity = inventoryRepository.save(entity);
+//
+//        return buildResponse(Collections.singletonList(toDto(entity)), false, null,
+//                "Inventory updated successfully");
     }
 
     @Override
